@@ -11,6 +11,7 @@ uniform bool blinnPhong;
 uniform bool transparent;
 uniform float shininess;
 uniform float eta;
+uniform float etaImg;
 uniform float radius;
 uniform float groundDistance;
 uniform vec3 center;
@@ -365,8 +366,8 @@ float G1(float alpha, float cos_theta) {
     float tan_theta = sin_theta / (cos_theta + 1e-6);
 
     float root = sqrt(1.0 + alpha * alpha * tan_theta * tan_theta);
-    float G1 = 2.0 / (1.0 + root);
-    return G1;
+    float GG = 2.0 / (1.0 + root);
+    return GG;
 }
 
 // Compute alpha from shininess
@@ -504,7 +505,7 @@ vec4 directIllumination(vec4 color, vec4 p, vec4 n, vec4 v)
     float im = 0.5;
 
     if (blinnPhong == true) {
-        float F = fresnel2(cos_HL, eta, im);
+        float F = fresnel2(cos_HL, eta, etaImg);
         vec4 Cs = F * color * pow(max(dot(N, H), 0.0), shininess) * lightIntensity; // Specular    
         return Ca + Cd + Cs;
     } else {
@@ -516,7 +517,7 @@ vec4 directIllumination(vec4 color, vec4 p, vec4 n, vec4 v)
         float cos_HV = max(dot(H, V), 0.0);
 
         // Compute Fresnel term F
-        float F = fresnel2(cos_HL, eta, im);
+        float F = fresnel2(cos_HL, eta, etaImg);
 
         // Compute Normal Distribution Function D
         
